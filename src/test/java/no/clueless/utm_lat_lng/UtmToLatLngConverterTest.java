@@ -19,13 +19,7 @@ class UtmToLatLngConverterTest {
     @ParameterizedTest
     @MethodSource
     void calculateLatLng(UTM utm, LatLng expectedResult) {
-        // arrange
-        var sut = new UtmToLatLngConverter();
-
-        // act
-        var latLng = sut.calculateLatLng(utm);
-
-        // assert
+        var latLng = UtmToLatLngConverter.calculateLatLng(utm);
         assertEquals(expectedResult, latLng);
     }
 }

@@ -17,24 +17,25 @@ public class UtmToLatLngConverter {
      * @return The latitude and longitude in degrees.
      */
     @NotNull
-    public LatLng calculateLatLng(@NotNull UTM utm) {
+    public static LatLng calculateLatLng(@NotNull UTM utm) {
         // Adjust N for hemisphere.
         var adjustedNorthing   = utm.northing() - utm.hemisphere().getFalseNorthing();
-        var normalizedNorthing = adjustedNorthing / (WGS84.POINT_SCALE_FACTOR * WGS84.RECTIFYING_RADIUS);
+        var normalizedNorthing = adjustedNorthing / WGS84.NORMALIZATION_FACTOR;
 
         // Adjust E to avoid having to deal with negative numbers.
         var adjustedEasting   = utm.easting() - WGS84.FALSE_EASTING;
-        var normalizedEasting = adjustedEasting / (WGS84.POINT_SCALE_FACTOR * WGS84.RECTIFYING_RADIUS);
+        var normalizedEasting = adjustedEasting / WGS84.NORMALIZATION_FACTOR;
 
-        var xiPrime    = normalizedNorthing - IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.BETA[j - 1] * Math.sin(2 * j * normalizedNorthing) * Math.cosh(2 * j * normalizedEasting)).sum();
-        var etaPrime   = normalizedEasting - IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.BETA[j - 1] * Math.cos(2 * j * normalizedNorthing) * Math.sinh(2 * j * normalizedEasting)).sum();
-        var chi        = Math.asin(Math.sin(xiPrime) / Math.cosh(etaPrime));
-        var phi        = chi + IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.DELTA[j - 1] * Math.sin(2 * j * chi)).sum();
-        var lambdaZero = utm.zoneNumber() * 6 - 183;
-        var lambda     = lambdaZero + Math.toDegrees(Math.atan(Math.sinh(etaPrime) / Math.cos(xiPrime)));
-        var lat        = BigDecimal.valueOf(Math.toDegrees(phi)).setScale(8, RoundingMode.CEILING).doubleValue();
-        var lng        = BigDecimal.valueOf(lambda).setScale(8, RoundingMode.CEILING).doubleValue();
+        var conformalLatitude            = normalizedNorthing - IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.beta(j) * Math.sin(2 * j * normalizedNorthing) * Math.cosh(2 * j * normalizedEasting)).sum();
+        var auxiliaryLongitudeDifference = normalizedEasting - IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.beta(j) * Math.cos(2 * j * normalizedNorthing) * Math.sinh(2 * j * normalizedEasting)).sum();
+        var rectifyingLatitude           = Math.asin(Math.sin(conformalLatitude) / Math.cosh(auxiliaryLongitudeDifference));
+        var geodeticLatitude             = rectifyingLatitude + IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.delta(j) * Math.sin(2 * j * rectifyingLatitude)).sum();
+        var centralMeridianLongitude     = WGS84.calculateCentralMeridianLongitude(utm.zoneNumber());
+        var geodeticLongitude            = centralMeridianLongitude + Math.toDegrees(Math.atan(Math.sinh(auxiliaryLongitudeDifference) / Math.cos(conformalLatitude)));
 
-        return new LatLng(lat, lng);
+        var latitude                     = BigDecimal.valueOf(Math.toDegrees(geodeticLatitude)).setScale(8, RoundingMode.CEILING).doubleValue();
+        var longitude                    = BigDecimal.valueOf(geodeticLongitude).setScale(8, RoundingMode.CEILING).doubleValue();
+
+        return new LatLng(latitude, longitude);
     }
 }
