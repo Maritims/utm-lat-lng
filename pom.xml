@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>no.clueless</groupId>
-    <artifactId>utm-lat-lng</artifactId>
-    <version>1.0.1-alpha-SNAPSHOT</version>
+    <artifactId>utmCoordinate-lat-lng</artifactId>
+    <version>1.0.2-alpha-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -18,7 +18,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/maritims/utm-lat-lng</url>
+            <url>https://maven.pkg.github.com/maritims/utmCoordinate-lat-lng</url>
         </repository>
     </distributionManagement>
 

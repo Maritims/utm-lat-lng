@@ -11,26 +11,26 @@ import java.util.stream.IntStream;
  */
 public class UtmToLatLngConverter {
     /**
-     * Convert a {@link UTM} reference to latitude and longitude using Krüger's method from 1912.
+     * Convert a {@link UTMCoordinate} reference to latitude and longitude using Krüger's method from 1912.
      *
-     * @param utm The UTM reference to convert.
+     * @param utmCoordinate The UTM reference to convert.
      * @return The latitude and longitude in degrees.
      */
     @NotNull
-    public static LatLng calculateLatLng(@NotNull UTM utm) {
+    public static LatLng calculateLatLng(@NotNull UTMCoordinate utmCoordinate) {
         // Adjust N for hemisphere.
-        var adjustedNorthing   = utm.northing() - utm.hemisphere().getFalseNorthing();
+        var adjustedNorthing   = utmCoordinate.northing() - utmCoordinate.hemisphere().getFalseNorthing();
         var normalizedNorthing = adjustedNorthing / WGS84.NORMALIZATION_FACTOR;
 
         // Adjust E to avoid having to deal with negative numbers.
-        var adjustedEasting   = utm.easting() - WGS84.FALSE_EASTING;
+        var adjustedEasting   = utmCoordinate.easting() - WGS84.FALSE_EASTING;
         var normalizedEasting = adjustedEasting / WGS84.NORMALIZATION_FACTOR;
 
         var conformalLatitude            = normalizedNorthing - IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.beta(j) * Math.sin(2 * j * normalizedNorthing) * Math.cosh(2 * j * normalizedEasting)).sum();
         var auxiliaryLongitudeDifference = normalizedEasting - IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.beta(j) * Math.cos(2 * j * normalizedNorthing) * Math.sinh(2 * j * normalizedEasting)).sum();
         var rectifyingLatitude           = Math.asin(Math.sin(conformalLatitude) / Math.cosh(auxiliaryLongitudeDifference));
         var geodeticLatitude             = rectifyingLatitude + IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.delta(j) * Math.sin(2 * j * rectifyingLatitude)).sum();
-        var centralMeridianLongitude     = WGS84.calculateCentralMeridianLongitude(utm.zoneNumber());
+        var centralMeridianLongitude     = WGS84.calculateCentralMeridianLongitude(utmCoordinate.zoneNumber());
         var geodeticLongitude            = centralMeridianLongitude + Math.toDegrees(Math.atan(Math.sinh(auxiliaryLongitudeDifference) / Math.cos(conformalLatitude)));
 
         var latitude                     = BigDecimal.valueOf(Math.toDegrees(geodeticLatitude)).setScale(8, RoundingMode.CEILING).doubleValue();
