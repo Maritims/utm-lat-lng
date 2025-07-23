@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Workflow status badges have been fixed after having been messed up by an erroneous refactoring of a class name.
+
 ## [1.0.3-alpha] - 2025-07-23
 
 ### Fixed
