@@ -28,3 +28,22 @@ import no.clueless.utm_lat_lng.UtmToLatLngConverter;
 UTMCoordinate utmCoordinate = new UTMCoordinate(32, Hemisphere.Northern, 553936.0, 6555976.0);
 LatLng latLng = UtmToLatLngConverter.calculateLatLng(utmCoordinate);
 ```
+
+### Parse UTM coordinate string with a latitude band
+
+```java
+
+import no.clueless.utm_lat_lng.UTM;
+import no.clueless.utm_lat_lng.UTMCoordinate;
+
+UTMCoordinate utmCoordinate = UTM.parseWithLatitudeBand("32V 597292E 6643009N");
+```
+
+### Parse UTM coordinate string with a hemisphere
+
+```java
+import no.clueless.utm_lat_lng.UTM;
+import no.clueless.utm_lat_lng.UTMCoordinate;
+
+UTMCoordinate utmCoordinate = UTM.parseWithHemisphere("32N 597292E 6643009N");
+```

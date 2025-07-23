@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added examples of parsing UTM coordinate strings to README.
+
 ### Fixed
 
 - Workflow status badges have been fixed after having been messed up by an erroneous refactoring of a class name.
