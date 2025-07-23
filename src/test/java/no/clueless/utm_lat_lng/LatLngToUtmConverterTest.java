@@ -22,6 +22,13 @@ class LatLngToUtmConverterTest {
                 .flatMap(s -> s);
     }
 
+    public static Stream<Arguments> calculateUtm() {
+        return Stream.of(
+                Arguments.of(new LatLng(59.139586, 9.942634), new UTM(32, Hemisphere.Northern, 553935.9960721927, 6555976.042645933)),
+                Arguments.of(new LatLng(43.642567, -79.387139), new UTM(17, Hemisphere.Northern, 630084.3008325039, 4833438.585627057))
+        );
+    }
+
     @ParameterizedTest
     @MethodSource
     public void getUtmZoneNumber(LatLng latLng, int expectedResult) {
@@ -57,10 +64,10 @@ class LatLngToUtmConverterTest {
         assertEquals(37, LatLngToUtmConverter.getUtmZoneNumber(latLng));
     }
 
-    @Test
-    public void calculateUtm() {
-        var latLng = new LatLng(59.139586, 9.942634);
-        var utm = LatLngToUtmConverter.calculateUtm(latLng);
-        assertEquals(new UTM(32, Hemisphere.Northern, 553935.9960721927, 6555976.042645933), utm);
+    @ParameterizedTest
+    @MethodSource
+    public void calculateUtm(LatLng latLng, UTM expectedResult) {
+        var result = LatLngToUtmConverter.calculateUtm(latLng);
+        assertEquals(expectedResult, result);
     }
 }
