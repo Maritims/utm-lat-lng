@@ -61,9 +61,6 @@ class LatLngToUtmConverterTest {
     public void calculateUtm() {
         var latLng = new LatLng(59.139586, 9.942634);
         var utm = LatLngToUtmConverter.calculateUtm(latLng);
-        assertEquals(32, utm.zoneNumber());
-        assertEquals(Hemisphere.Northern, utm.hemisphere());
-        assertEquals(553935.99607011, utm.easting());
-        assertEquals(WGS84.NORMALIZATION_FACTOR * (WGS84.RECTIFYING_RADIUS + 10000000), utm.northing());
+        assertEquals(new UTM(32, Hemisphere.Northern, 553935.9960721927, 6555976.042645933), utm);
     }
 }

@@ -37,30 +37,32 @@ public class LatLngToUtmConverter {
 
     @NotNull
     public static UTM calculateUtm(@NotNull LatLng latLng) {
-        var phi         = Math.toRadians(latLng.lat());
-        var lambda      = Math.toRadians(latLng.lng());
-        var lambdaZero  = Math.toRadians(WGS84.calculateCentralMeridianLongitude(getUtmZoneNumber(latLng)));
-        var sinPhi      = Math.sin(phi);
-        var coefficient = (2.0 * Math.sqrt(WGS84.THIRD_FLATTENING)) / (1 + WGS84.THIRD_FLATTENING);
-        var term1       = atanh(sinPhi);
-        var term2       = atanh(coefficient * sinPhi);
-        var t           = Math.sinh(term1 - (coefficient * term2));
+        var phi           = Math.toRadians(latLng.lat());
+        var lambda        = Math.toRadians(latLng.lng());
+        var utmZoneNumber = getUtmZoneNumber(latLng);
+        var lambdaZero    = Math.toRadians(WGS84.calculateCentralMeridianLongitude(utmZoneNumber));
+        var sinPhi        = Math.sin(phi);
+        var coefficient   = (2.0 * Math.sqrt(WGS84.THIRD_FLATTENING)) / (1 + WGS84.THIRD_FLATTENING);
+        var term1         = atanh(sinPhi);
+        var term2         = atanh(coefficient * sinPhi);
+        var t             = Math.sinh(term1 - (coefficient * term2));
 
         var hemisphere = phi < 0 ? Hemisphere.Southern : Hemisphere.Northern;
         var foo        = Math.cos(lambda - lambdaZero);
         var bar        = t / foo;
-        var xiPrime    = atanh(bar);
+        var xiPrime    = Math.atan(bar);
         var etaPrime   = atanh(Math.sin(lambda - lambdaZero) / Math.sqrt(1 + Math.pow(t, 2)));
         var sigma      = 1 + IntStream.rangeClosed(1, 3).mapToDouble(j -> 2 * j * WGS84.alpha(j) * Math.cos(2 * j * xiPrime) * Math.cosh(2 * j * etaPrime)).sum();
         var tau        = IntStream.rangeClosed(1, 3).mapToDouble(j -> 2 * j * WGS84.alpha(j) * Math.sin(2 * j * xiPrime) * Math.sinh(2 * j * etaPrime)).sum();
 
-        var easting  = (WGS84.FALSE_EASTING + WGS84.NORMALIZATION_FACTOR) * (etaPrime + IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.alpha(j) * Math.cos(2 * j * xiPrime) * Math.sinh(2 * j * etaPrime)).sum());
-        var northing = (hemisphere.getFalseNorthing() + WGS84.NORMALIZATION_FACTOR) * (xiPrime + IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.alpha(j) * Math.sin(2 * j * xiPrime) * Math.cosh(2 * j * etaPrime)).sum());
+        var easting  = WGS84.FALSE_EASTING + WGS84.NORMALIZATION_FACTOR * (etaPrime + IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.alpha(j) * Math.cos(2 * j * xiPrime) * Math.sinh(2 * j * etaPrime)).sum());
+        var northing = hemisphere.getFalseNorthing() + WGS84.NORMALIZATION_FACTOR * (xiPrime + IntStream.rangeClosed(1, 3).mapToDouble(j -> WGS84.alpha(j) * Math.sin(2 * j * xiPrime) * Math.cosh(2 * j * etaPrime)).sum());
 
         return new UTM(getUtmZoneNumber(latLng), hemisphere, easting, northing);
     }
 
+    // Why doesn't Java have this!?
     static double atanh(double x) {
-        return (Math.log(1 + x) / Math.log(1 - x)) / 2;
+        return 0.5 * Math.log((1 + x) / (1 - x));
     }
 }
