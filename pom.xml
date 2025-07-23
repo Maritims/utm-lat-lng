@@ -6,13 +6,21 @@
 
     <groupId>no.clueless</groupId>
     <artifactId>utm-lat-lng</artifactId>
-    <version>1.0.0-alpha-SNAPSHOT</version>
+    <version>1.0.1-alpha-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/maritims/utm-lat-lng</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
