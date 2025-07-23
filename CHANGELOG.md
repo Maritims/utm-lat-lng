@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3-alpha] - 2025-07-23
+
+### Fixed
+
+- Artifact name has been corrected after having been messed up by an erroneous refactoring of a class name.
+
 ## [1.0.2-alpha] - 2025-07-23
 
 ### Added
@@ -33,7 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release with functioning conversion from UTM to latitude and longitude, and vice versa.
 
-[Unreleased]: https://github.com/Maritims/utm-lat-lng/compare/v1.0.2-alpha...main
+[Unreleased]: https://github.com/Maritims/utm-lat-lng/compare/v1.0.3-alpha...main
+[1.0.2-alpha]: https://github.com/Maritims/utm-lat-lng/compare/v1.0.2-alpha...v1.0.3-alpha
 [1.0.2-alpha]: https://github.com/Maritims/utm-lat-lng/compare/v1.0.1-alpha...v1.0.2-alpha
 [1.0.1-alpha]: https://github.com/Maritims/utm-lat-lng/compare/v1.0.0-alpha...v1.0.1-alpha
 [1.0.0-alpha]: https://github.com/Maritims/utm-lat-lng/releases/tag/v1.0.0-alpha
